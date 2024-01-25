@@ -1,6 +1,6 @@
 # chat-app
-A full-fledged chat application using golang &amp; js
 
+A full-fledged chat application using golang &amp; js
 
 ```
 Client                            Server
@@ -18,3 +18,5 @@ Client                            Server
   | ------------------------------> |
 
 ```
+
+![websockt_connection](/assets/websocket-coonection.png)
