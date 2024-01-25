@@ -1,2 +1,20 @@
 # chat-app
-A full fledge chat application using golang &amp; js
+A full-fledged chat application using golang &amp; js
+
+
+```
+Client                            Server
+  |                                 |
+  |    HTTP (Upgrade Request)       |
+  | ------------------------------> |
+  |                                 |
+  |   WebSocket Supported           |
+  |   HTTP (101 Switching Protocol) |
+  | <-------------------------------|
+  |                                 |
+  |  WebSocket Communication        |
+  | <---------------------------->  |
+  |   WebSocket Close               |
+  | ------------------------------> |
+
+```

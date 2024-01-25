@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>chat app</title>
+</head>
+
+<body>
+  <div class="center">
+    <h1>Welcome to chat app</h1>
+    <h3 id="chat-header">Currently in chat: general</h3>
+
+    <form id="chatroom-selection">
+      <label for="chatroom">Chatroom:</label>
+      <input type="text" id="chatroom" name="chatroom"><br><br>
+      <input type="submit" value="Change chatroom">
+    </form>
+
+    <br>
+
+    <textarea class="messagearea" name="chatmessages" id="chatmessages" readonly cols="50" rows="4"
+      placeholder="Welcome to chatroom"></textarea>
+
+    <br>
+
+    <form id="chatroom-message">
+      <label for="messages">Message:</label>
+      <input type="text" id="message" name="message"><br><br>
+      <input type="submit" value="Send message">
+    </form>
+  </div>
+</body>
+
+</html>
