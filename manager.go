@@ -39,7 +39,10 @@ func (m *Manger) serverWS(w http.ResponseWriter, r *http.Request) {
 
 	m.addClient(client)
 
-	// defer conn.Close()
+	// start client process
+	go client.readMessages()
+	go client.writeMessages()
+
 }
 
 func (m *Manger) addClient(client *Client) {

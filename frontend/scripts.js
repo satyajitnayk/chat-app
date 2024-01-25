@@ -1,4 +1,5 @@
 let selectedChat = 'general';
+let conn;
 
 function changeChatRoom() {
   let newchat = document.getElementById('chatroom');
@@ -11,7 +12,7 @@ function changeChatRoom() {
 function sendMessage() {
   let newmessage = document.getElementById('message');
   if (newmessage) {
-    console.log(newmessage);
+    conn.send(newmessage.value);
   }
   return false;
 }
@@ -24,7 +25,11 @@ window.onload = function () {
   if (window['WebSocket']) {
     console.log('browser supports websockets');
     // connect to websocket
-    let conn = new WebSocket(`ws://${document.location.host}/ws`);
+    conn = new WebSocket(`ws://${document.location.host}/ws`);
+
+    conn.onmessage = function (event) {
+      console.log(event);
+    };
   } else {
     console.log("browser doen't support websockets");
   }
