@@ -49,3 +49,15 @@ Client                            Server
 | OPEN       | The WebSocket connection is open and ready for communication.   |
 | CLOSING    | The connection is in the process of closing.                    |
 | CLOSED     | The WebSocket connection has been closed.                       |
+
+Certainly! Below is a crisp note accompanied by a simple dotted line diagram illustrating the ping-pong mechanism in WebSocket communication:
+
+---
+
+## WebSocket Ping-Pong Mechanism:
+
+WebSocket communication employs a ping-pong mechanism to sustain connection health between client and server:
+
+- **Server Sends Ping**: Periodically, the server sends a ping frame to the client.
+- **Client Responds with Pong**: Upon receiving the ping frame, the client automatically replies with a pong frame.
+- **Acknowledgment by Server**: The server acknowledges the pong frame, ensuring the connection remains active.
