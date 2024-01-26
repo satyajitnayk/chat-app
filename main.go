@@ -9,7 +9,8 @@ import (
 func main() {
 	setupAPI()
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	// generate using the `gencert.bash` script
+	log.Fatal(http.ListenAndServeTLS(":8080", "server.cert", "server.key", nil))
 }
 func setupAPI() {
 

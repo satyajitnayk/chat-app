@@ -4,6 +4,22 @@ A full-fledged chat application using golang &amp; js
 
 - use username: satya & password: 1234 for login
 
+### Generate self signing server certificates for https:// and wss://
+
+- use `gencert.bash` script to generate
+
+![generate_server_certificate](/assets/generate-certificates.png)
+
+- When you use self-sign certificate then you will get alert `Your Connection is not private` as below screenshot
+  ![connection_not_private](/assets/connection_not_private.png)
+
+- Just click on advanced --> proceed to unsafe website
+
+- You will see following things in terminal
+  ![terminal_output](/assets/terminal_output.png)
+
+> Alert: Do not push your key & certificate to repo. Pull them from somewhere secure.
+
 ```
 Client                            Server
   |                                 |

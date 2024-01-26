@@ -76,8 +76,8 @@ function connectWebsocket(otp) {
   // check if user browser supports websocket
   if (window['WebSocket']) {
     console.log('browser supports websockets');
-    // connect to websocket
-    conn = new WebSocket(`ws://${document.location.host}/ws?otp=${otp}`);
+    // connect to secure websocket
+    conn = new WebSocket(`wss://${document.location.host}/ws?otp=${otp}`);
 
     conn.onopen = function (e) {
       document.getElementById('connection-header').innerHTML =

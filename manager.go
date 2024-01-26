@@ -146,7 +146,7 @@ func checkOrigin(r *http.Request) bool {
 
 	// TODO:make it configurable from env/config file
 	switch origin {
-	case "http://localhost:8080":
+	case "https://localhost:8080":
 		return true
 	default:
 		return false

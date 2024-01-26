@@ -21,3 +21,7 @@
 go.work
 
 .idea
+
+# ignore keys or certificates
+*.cert
+*.key
