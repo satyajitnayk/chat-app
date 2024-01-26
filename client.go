@@ -48,6 +48,10 @@ func (client *Client) readMessages() {
 		return
 	}
 
+	// set read limit to message
+	// if client send more than limit server will close the connection
+	client.connection.SetReadLimit(512) // set byte size as per requirement
+
 	client.connection.SetPongHandler(client.pongHandler)
 
 	for {

@@ -54,10 +54,22 @@ Certainly! Below is a crisp note accompanied by a simple dotted line diagram ill
 
 ---
 
-## WebSocket Ping-Pong Mechanism:
+## WebSocket Ping-Pong/Heartbeat Mechanism:
 
 WebSocket communication employs a ping-pong mechanism to sustain connection health between client and server:
 
 - **Server Sends Ping**: Periodically, the server sends a ping frame to the client.
 - **Client Responds with Pong**: Upon receiving the ping frame, the client automatically replies with a pong frame.
 - **Acknowledgment by Server**: The server acknowledges the pong frame, ensuring the connection remains active.
+
+## Security Concerns with websocket
+
+### Security Considerations with Jumbo Frames in WebSocket:
+
+Reason :larger frame size that exceeds the typical MTU (Maximum Transmission Unit) size of the network.
+
+- **DDoS Amplification:** Jumbo frames can be exploited in DDoS attacks, amplifying the impact by overwhelming server resources with large payloads.
+- **Resource Strain:** Handling jumbo frame payloads can strain server resources, potentially leading to denial of service if servers become overwhelmed.
+- **Protocol Vulnerabilities:** Vulnerabilities in WebSocket implementations related to jumbo frame handling can be exploited for arbitrary code execution or server crashes.
+- **Mitigation Measures:** Enforce maximum frame size limits, implement rate limiting, and regularly update software to mitigate risks associated with jumbo frames.
+- **Best Practices:** Configure WebSocket servers securely, considering network settings, parameters, and access controls to minimize attack surface and enhance security.
