@@ -1,6 +1,34 @@
 let selectedChat = 'general';
 let conn;
 
+class Event {
+  constructor(type, payload) {
+    this.type = type;
+    this.payload = payload;
+  }
+}
+
+function routeEvent(event) {
+  if (!event.type) {
+    alert('no type field in the event');
+  }
+
+  switch (event.type) {
+    case 'new_message':
+      console.log('new message');
+      break;
+    default:
+      alert('unsupported message type');
+      break;
+  }
+}
+
+function sendEvent(eventName, payload) {
+  const event = new Event(eventName, payload);
+
+  conn.send(JSON.stringify(event));
+}
+
 function changeChatRoom() {
   let newchat = document.getElementById('chatroom');
   if (newchat && newchat.value != selectedChat) {
@@ -12,7 +40,7 @@ function changeChatRoom() {
 function sendMessage() {
   let newmessage = document.getElementById('message');
   if (newmessage) {
-    conn.send(newmessage.value);
+    sendEvent('send_message', newmessage.value);
   }
   return false;
 }
@@ -27,8 +55,11 @@ window.onload = function () {
     // connect to websocket
     conn = new WebSocket(`ws://${document.location.host}/ws`);
 
-    conn.onmessage = function (event) {
-      console.log(event);
+    conn.onmessage = function (e) {
+      const eventData = JSON.parse(e.data);
+
+      const event = Object.assign(new Event(), eventData);
+      routeEvent(event);
     };
   } else {
     console.log("browser doen't support websockets");

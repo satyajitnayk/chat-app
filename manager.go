@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -18,11 +20,36 @@ var (
 type Manger struct {
 	clients ClientList
 	sync.RWMutex
+	handlers map[string]EventHandler
 }
 
 func NewManger() *Manger {
-	return &Manger{
-		clients: make(ClientList), // to avoid null ptr exception
+	m := &Manger{
+		clients:  make(ClientList), // to avoid null ptr exception
+		handlers: make(map[string]EventHandler),
+	}
+
+	m.setupEventHandlers()
+	return m
+}
+
+func (m *Manger) setupEventHandlers() {
+	m.handlers[EventSendMessage] = SendMessage
+}
+
+func SendMessage(event Event, client *Client) error {
+	fmt.Println(event)
+	return nil
+}
+
+func (m *Manger) routeEvent(event Event, client *Client) error {
+	if handler, ok := m.handlers[event.Type]; ok {
+		if err := handler(event, client); err != nil {
+			return err
+		}
+		return nil
+	} else {
+		return errors.New("there is no such event type")
 	}
 }
 
