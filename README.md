@@ -73,3 +73,12 @@ Reason :larger frame size that exceeds the typical MTU (Maximum Transmission Uni
 - **Protocol Vulnerabilities:** Vulnerabilities in WebSocket implementations related to jumbo frame handling can be exploited for arbitrary code execution or server crashes.
 - **Mitigation Measures:** Enforce maximum frame size limits, implement rate limiting, and regularly update software to mitigate risks associated with jumbo frames.
 - **Best Practices:** Configure WebSocket servers securely, considering network settings, parameters, and access controls to minimize attack surface and enhance security.
+
+### CORS Requirements in WebSocket:
+
+- **Origin Policy**: WebSocket connections follow the browser's same-origin policy.
+- **Cross-Origin Connections**: WebSocket connections to different domains are blocked by default.
+- **CORS Headers**: Servers must include CORS headers like Access-Control-Allow-Origin to authorize cross-origin WebSocket connections.
+- **Server Configuration**: WebSocket servers need proper configuration to add CORS headers and comply with browser security policies.
+
+![cors_error](/assets/cors-error.png)

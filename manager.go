@@ -12,6 +12,7 @@ import (
 
 var (
 	websocketUpgrader = websocket.Upgrader{
+		CheckOrigin:     checkOrigin,
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
 	}
@@ -86,5 +87,17 @@ func (m *Manger) removeClient(client *Client) {
 	if _, ok := m.clients[client]; ok {
 		client.connection.Close() // close client connection
 		delete(m.clients, client)
+	}
+}
+
+func checkOrigin(r *http.Request) bool {
+	origin := r.Header.Get("Origin")
+
+	// TODO:make it configurable from env/config file
+	switch origin {
+	case "http://localhost:8080":
+		return true
+	default:
+		return false
 	}
 }
