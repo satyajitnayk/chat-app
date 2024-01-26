@@ -42,10 +42,48 @@ func NewManager(ctx context.Context) *Manager {
 
 func (m *Manager) setupEventHandlers() {
 	m.handlers[EventSendMessage] = SendMessage
+	m.handlers[EventChangeChatRoom] = ChangeChatRoomHandler
+}
+
+func ChangeChatRoomHandler(event Event, client *Client) error {
+	var changeChatRoomEvent ChangeChatRoomEvent
+
+	if err := json.Unmarshal(event.Payload, &changeChatRoomEvent); err != nil {
+		return fmt.Errorf("bad payload in request: %v", err)
+	}
+
+	client.chatroom = changeChatRoomEvent.Name
+	return nil
 }
 
 func SendMessage(event Event, client *Client) error {
-	fmt.Println(event)
+	var chatevent SendMessageEvent
+	if err := json.Unmarshal(event.Payload, &chatevent); err != nil {
+		return fmt.Errorf("bad payload in request: %v", err)
+	}
+
+	// broadcast message to all clients
+	var broadcastMessage NewMessageEvent
+	broadcastMessage.Message = chatevent.Message
+	broadcastMessage.From = chatevent.From
+
+	data, err := json.Marshal(broadcastMessage)
+	if err != nil {
+		return fmt.Errorf("failed to marshal broadcast message: %v", err)
+	}
+
+	outgoingEvent := Event{
+		Payload: data,
+		Type:    EventReceiveMessage,
+	}
+
+	for currentClient := range client.manager.clients {
+		// broadcast to all clients in the same chat room
+		if client.chatroom == currentClient.chatroom {
+			currentClient.egress <- outgoingEvent
+		}
+	}
+
 	return nil
 }
 

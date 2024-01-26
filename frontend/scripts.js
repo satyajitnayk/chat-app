@@ -8,19 +8,74 @@ class Event {
   }
 }
 
+class SendMessageEvent {
+  constructor(message, from) {
+    this.message = message;
+    this.from = from;
+  }
+}
+
+class ReceiveMessageEvent {
+  constructor(message, from, sent) {
+    this.message = message;
+    this.from = from;
+    this.sent = sent;
+  }
+}
+
+class ChangeChatRoomEvent {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
+function changeChatRoom() {
+  let newchat = document.getElementById('chatroom');
+  if (newchat && newchat.value != selectedChat) {
+    selectedChat = newchat.value;
+    header = document.getElementById('chat-header').innerHTML =
+      'Currently in chatroom: ' + selectedChat;
+
+    let changeEvent = new ChangeChatRoomEvent(selectedChat);
+    sendEvent('change_chat_room', changeEvent);
+
+    // clean the chat area as changing chatroom
+    textarea = document.getElementById('chatmessages');
+    textarea.innerHTML = `You changed room into: ${selectedChat}`;
+  }
+  return false; // to avoid redirection of form
+}
+
 function routeEvent(event) {
   if (!event.type) {
     alert('no type field in the event');
   }
 
   switch (event.type) {
-    case 'new_message':
-      console.log('new message');
+    case 'receive_message':
+      const messageEvent = Object.assign(
+        new ReceiveMessageEvent(),
+        event.payload
+      );
+      appendChatMessage(messageEvent);
       break;
     default:
       alert('unsupported message type');
       break;
   }
+}
+
+function appendChatMessage(messageEvent) {
+  const date = new Date(messageEvent.sent);
+  const formattedMsg = `${messageEvent.from} \n${date.toLocaleString()}: ${
+    messageEvent.message
+  }`;
+
+  const textarea = document.getElementById('chatmessages');
+  // append new msg to text area
+  textarea.innerHTML = textarea.innerHTML + '\n' + formattedMsg;
+  // scroll to height
+  textarea.scrollTop = textarea.scrollHeight;
 }
 
 function sendEvent(eventName, payload) {
@@ -29,18 +84,12 @@ function sendEvent(eventName, payload) {
   conn.send(JSON.stringify(event));
 }
 
-function changeChatRoom() {
-  let newchat = document.getElementById('chatroom');
-  if (newchat && newchat.value != selectedChat) {
-    console.log(newchat);
-  }
-  return false; // this will prevent form to navigate to different URL
-}
-
 function sendMessage() {
   let newmessage = document.getElementById('message');
   if (newmessage) {
-    sendEvent('send_message', newmessage.value);
+    // TODO: pick username from client side
+    let outgoingEvent = new SendMessageEvent(newmessage.value, 'user1');
+    sendEvent('send_message', outgoingEvent);
   }
   return false;
 }
