@@ -2,6 +2,8 @@
 
 A full-fledged chat application using golang &amp; js
 
+- use username: satya & password: 1234 for login
+
 ```
 Client                            Server
   |                                 |
@@ -82,3 +84,12 @@ Reason :larger frame size that exceeds the typical MTU (Maximum Transmission Uni
 - **Server Configuration**: WebSocket servers need proper configuration to add CORS headers and comply with browser security policies.
 
 ![cors_error](/assets/cors-error.png)
+
+### Authentication in WebSocket applications
+
+- **Token-Based Authentication**: Users provide JWT or OAuth tokens for validation during WebSocket connections.
+- **Cookie-Based Authentication**: Authentication tokens or session identifiers are transmitted via cookies during WebSocket sessions.
+- **HTTP Authentication Headers**: Clients send authentication credentials using standard HTTP authentication headers during the WebSocket handshake.
+- **Custom Authentication Headers**: Clients transmit custom headers containing authentication information during WebSocket connections.
+- **IP-Based Authentication**: Authentication is based on client IP addresses, useful for trusted environments but limited in dynamic settings.
+- **Certificate-Based Authentication**: Clients present X.509 certificates during the WebSocket handshake for server verification, ensuring strong mutual authentication.

@@ -12,6 +12,7 @@
   <div class="center">
     <h1>Welcome to chat app</h1>
     <h3 id="chat-header">Currently in chat: general</h3>
+    <h3 id="connection-header">Connected to websocket: false</h3>
 
     <form id="chatroom-selection">
       <label for="chatroom">Chatroom:</label>
@@ -31,6 +32,17 @@
       <input type="text" id="message" name="message"><br><br>
       <input type="submit" value="Send message">
     </form>
+
+    <br><br>
+    <div style="border: 3px solid black;">
+      <form id="login-form">
+        <label for="username">username:</label>
+        <input type="text" id="username" name="username"><br>
+        <label for="password">password:</label>
+        <input type="password" id="password" name="password"><br><br>
+        <input type="submit" value="Login">
+      </form>
+    </div>
   </div>
 
   <script src="scripts.js"></script>

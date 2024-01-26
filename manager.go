@@ -1,11 +1,14 @@
 package main
 
 import (
+	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -18,23 +21,26 @@ var (
 	}
 )
 
-type Manger struct {
+type Manager struct {
 	clients ClientList
 	sync.RWMutex
+
+	otps     RetentionMap
 	handlers map[string]EventHandler
 }
 
-func NewManger() *Manger {
-	m := &Manger{
+func NewManager(ctx context.Context) *Manager {
+	m := &Manager{
 		clients:  make(ClientList), // to avoid null ptr exception
 		handlers: make(map[string]EventHandler),
+		otps:     NewRetentionMap(ctx, 5*time.Second),
 	}
 
 	m.setupEventHandlers()
 	return m
 }
 
-func (m *Manger) setupEventHandlers() {
+func (m *Manager) setupEventHandlers() {
 	m.handlers[EventSendMessage] = SendMessage
 }
 
@@ -43,7 +49,7 @@ func SendMessage(event Event, client *Client) error {
 	return nil
 }
 
-func (m *Manger) routeEvent(event Event, client *Client) error {
+func (m *Manager) routeEvent(event Event, client *Client) error {
 	if handler, ok := m.handlers[event.Type]; ok {
 		if err := handler(event, client); err != nil {
 			return err
@@ -54,7 +60,15 @@ func (m *Manger) routeEvent(event Event, client *Client) error {
 	}
 }
 
-func (m *Manger) serverWS(w http.ResponseWriter, r *http.Request) {
+func (m *Manager) serverWS(w http.ResponseWriter, r *http.Request) {
+	otp := r.URL.Query().Get("otp")
+
+	// no otp in url or invalid otp
+	if otp == "" || !m.otps.VerifyOTP(otp) {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	log.Println("new connection")
 	// upgrade regular HTTP connection to websocket
 	conn, err := websocketUpgrader.Upgrade(w, r, nil)
@@ -73,14 +87,51 @@ func (m *Manger) serverWS(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (m *Manger) addClient(client *Client) {
+func (m *Manager) loginHandler(w http.ResponseWriter, r *http.Request) {
+	type userLoginRequest struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+
+	var req userLoginRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// For simplicity I have hard coded them(As my focus is Websocket in this project)
+	if req.Username == "satya" && req.Password == "1234" {
+		type response struct {
+			OTP string `json:"otp"`
+		}
+
+		otp := m.otps.NewOTP()
+
+		resp := response{
+			OTP: otp.Key,
+		}
+
+		data, err := json.Marshal(resp)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Write(data)
+		return
+	}
+	w.WriteHeader(http.StatusUnauthorized)
+}
+
+func (m *Manager) addClient(client *Client) {
 	m.Lock()
 	defer m.Unlock()
 
 	m.clients[client] = true
 }
 
-func (m *Manger) removeClient(client *Client) {
+func (m *Manager) removeClient(client *Client) {
 	m.Lock()
 	defer m.Unlock()
 
