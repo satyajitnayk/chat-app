@@ -41,7 +41,7 @@ func NewManager(ctx context.Context) *Manager {
 }
 
 func (m *Manager) setupEventHandlers() {
-	m.handlers[EventSendMessage] = SendMessage
+	m.handlers[EventSendMessage] = SendMessageHandler
 	m.handlers[EventChangeChatRoom] = ChangeChatRoomHandler
 }
 
@@ -56,7 +56,8 @@ func ChangeChatRoomHandler(event Event, client *Client) error {
 	return nil
 }
 
-func SendMessage(event Event, client *Client) error {
+// SendMessageHandler will send out a message to all other participants in the chat
+func SendMessageHandler(event Event, client *Client) error {
 	var chatevent SendMessageEvent
 	if err := json.Unmarshal(event.Payload, &chatevent); err != nil {
 		return fmt.Errorf("bad payload in request: %v", err)

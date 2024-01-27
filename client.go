@@ -18,13 +18,15 @@ const (
 	pingInterval = (pongWait * 9) / 10
 )
 
+// ClientList is a map used to help manage a map of clients
 type ClientList map[*Client]bool
 
+// Client is a websocket client, basically a frontend visitor
 type Client struct {
 	connection *websocket.Conn
 	manager    *Manager
 	chatroom   string
-	// egress is used to avoid concurrent writes  on the WS connection
+	// egress is used to avoid concurrent writes on the WS connection
 	egress chan Event
 }
 
@@ -42,7 +44,7 @@ func (client *Client) readMessages() {
 		client.manager.removeClient(client)
 	}()
 
-	// set the wait time for pong message fromc lient
+	// set the wait time for pong message from client
 	if err := client.connection.SetReadDeadline(time.Now().Add(pongWait)); err != nil {
 		log.Println(err)
 		return
@@ -55,7 +57,8 @@ func (client *Client) readMessages() {
 	client.connection.SetPongHandler(client.pongHandler)
 
 	for {
-		// refer to Message types in websocket section of readme for messageTypes
+		// ReadMessage is used to read the next message in queue
+		// in the connection
 		_, payload, err := client.connection.ReadMessage()
 
 		if err != nil {
@@ -78,6 +81,7 @@ func (client *Client) readMessages() {
 	}
 }
 
+// writeMessages is a process that listens for new messages to output to the Client
 func (client *Client) writeMessages() {
 	// clean unused connection
 	defer func() {
@@ -121,6 +125,7 @@ func (client *Client) writeMessages() {
 	}
 }
 
+// pongHandler is used to handle PongMessages for the Client
 func (client *Client) pongHandler(pongMsg string) error {
 	log.Println("pong")
 	// reset the wait timer for pong msg from client
